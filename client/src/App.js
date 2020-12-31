@@ -1,13 +1,18 @@
 import React, { Component } from "react";
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
-import getWeb3 from "./utils/getWeb3";
+import getWeb3 from "./getWeb3.js";
 import ipfs from './ipfs';
+
+// import './css/oswald.css'
+// import './css/open-sans.css'
+// import './css/pure-min.css'
 
 import "./App.css";
 
 class App extends Component {
   constructor(props) {
-    super(props);
+    super(props)
+
     this.state = {
       storageValue: 0,
       web3: null,
@@ -16,7 +21,39 @@ class App extends Component {
       buffer: null,
       ipfsHash: ''
     };
+    this.captureFile = this.captureFile.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+
   }
+
+  componentWillUnmount() {
+
+
+
+    getWeb3
+    .then(results => {
+      this.setState({
+        web3: results.web3
+      })
+
+      this.instantiateContract()
+    })
+    .catch(() => {
+      console.log('error finding web3.')
+    })
+  }
+
+
+  // instantiateContract() {
+
+
+  // // const contract = require('truffle-contract')
+  // const SimpleStorage = contract(SimpleStorageContract)
+  // SimpleStorage.setProvider(this.state.web3.currentProvider)
+
+  // var SimpleStorageInstance
+
+  // }
 
 
   componentDidMount = async () => {
@@ -26,6 +63,7 @@ class App extends Component {
 
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
+      
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
@@ -38,6 +76,7 @@ class App extends Component {
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
       this.setState({ web3, accounts, contract: instance }, this.retrieveFile);
+      // console.log("contract", contract);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -48,6 +87,7 @@ class App extends Component {
   };
 
   retrieveFile = async () => {
+    // eslint-disable-next-line
     const { accounts, contract } = this.state;
     // Get the value from the contract to prove it worked.
     const ipfsHash = await contract.methods.get().call();
@@ -96,10 +136,23 @@ class App extends Component {
     }
   }
 
+  // onSubmit(event) {
+  //   event.preventDefault()
+  //   ipfs.files.add(this.state.buffer, (err, result) => {
+  //     if(error) {
+  //       console.error(error)
+  //       return
+  //     }
+  //      this.setState({ ipfsHash: result[0].hash})
+  //      console.log('ipfHash', this.state.ipfsHash)
+  //   })
+    
+  // }
+
   render() {
-    if (!this.state.web3) {
-      return <div>Loading Web3, accounts, and contract...</div>;
-    }
+    // if (!this.state.web3) {
+    //   return <div>Loading Web3, accounts, and contract...</div>;
+    // }
     return (
       <div className="App">
         <h1>Your Image</h1>
